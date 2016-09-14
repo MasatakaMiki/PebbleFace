@@ -1,0 +1,43 @@
+{
+    "author": "masataka.miki@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "tutorial-build-a-watchface-in-c",
+    "pebble": {
+        "displayName": "Tutorial-build-a-watchface-in-c",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/background.png",
+                    "name": "IMAGE_BACKGROUND",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/CREAMPUF.TTF",
+                    "name": "CREAMPUF_36",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/mytype.ttf",
+                    "name": "MYTYPE_36",
+                    "targetPlatforms": null,
+                    "type": "font"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt"
+        ],
+        "uuid": "7fe41204-32e4-4663-9809-9facf83fe2df",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
