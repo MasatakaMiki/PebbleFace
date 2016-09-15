@@ -4,12 +4,30 @@
     "keywords": [],
     "name": "tutorial-build-a-watchface-in-c",
     "pebble": {
+        "capabilities": [
+            "location"
+        ],
         "displayName": "Tutorial-build-a-watchface-in-c",
         "enableMultiJS": true,
-        "messageKeys": [],
+        "messageKeys": [
+            "TEMPERATURE",
+            "CONDITIONS"
+        ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "fonts/BodoniFLF-Roman.ttf",
+                    "name": "BODON_FLF_ROMAN_18",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/BodoniFLF-Roman.ttf",
+                    "name": "BODON_FLF_ROMAN_36",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
                 {
                     "file": "images/background.png",
                     "name": "IMAGE_BACKGROUND",
@@ -18,7 +36,19 @@
                 },
                 {
                     "file": "fonts/CREAMPUF.TTF",
+                    "name": "CREAMPUF_18",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/CREAMPUF.TTF",
                     "name": "CREAMPUF_36",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/mytype.ttf",
+                    "name": "MYTYPE_18",
                     "targetPlatforms": null,
                     "type": "font"
                 },
