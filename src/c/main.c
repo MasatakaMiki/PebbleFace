@@ -5,10 +5,15 @@ static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
 static TextLayer *s_battery_layer;
 static TextLayer *s_time_layer;
+static TextLayer *s_date_top_layer;
+static TextLayer *s_date_btm_layer;
 static TextLayer *s_weather_layer;
+static TextLayer *s_forecast_layer;
 static GFont s_battery_font;
 static GFont s_time_font;
+static GFont s_date_font;
 static GFont s_weather_font;
+static GFont s_forecast_font;
 static char s_battery_buffer[16];
 
 static void battery_handler(BatteryChargeState charge_state) {
@@ -22,12 +27,17 @@ static void update_time() {
   struct tm *tick_time = localtime(&temp);
 
   // Write the current hours and minutes into a buffer
-  static char s_buffer[8];
-  strftime(s_buffer, sizeof(s_buffer), clock_is_24h_style() ?
-                                          "%H:%M" : "%I:%M", tick_time);
+  static char s_time_buffer[8];
+  strftime(s_time_buffer, sizeof(s_time_buffer), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
+  static char s_date_top_buffer[16];
+  strftime(s_date_top_buffer, sizeof(s_date_top_buffer), "%A", tick_time);
+  static char s_date_btm_buffer[16];
+  strftime(s_date_btm_buffer, sizeof(s_date_btm_buffer), "%e %B", tick_time);
 
   // Display this time on the TextLayer
-  text_layer_set_text(s_time_layer, s_buffer);
+  text_layer_set_text(s_time_layer, s_time_buffer);
+  text_layer_set_text(s_date_top_layer, s_date_top_buffer);
+  text_layer_set_text(s_date_btm_layer, s_date_btm_buffer);
 }
 
 static void main_window_load(Window *window) {
@@ -44,63 +54,89 @@ static void main_window_load(Window *window) {
   layer_add_child(window_layer, bitmap_layer_get_layer(s_background_layer));
 
   // Create the TextLayer with specific bounds
-  s_time_layer = text_layer_create(GRect(0, 36, bounds.size.w, 48));
-  // Create temperature Layer
-  s_weather_layer = text_layer_create(GRect(0, 96, bounds.size.w, 24));
-  // Create battery Layer
   s_battery_layer = text_layer_create(GRect(10, 10, bounds.size.w - 20, 18));
-  
-  // Improve the layout to be more like a watchface
+  s_time_layer = text_layer_create(GRect(0, 26, bounds.size.w, 46));
+  s_date_top_layer = text_layer_create(GRect(18, 72, bounds.size.w - 36, 18));
+  s_date_btm_layer = text_layer_create(GRect(10, 86, bounds.size.w - 20, 18));
+  s_weather_layer = text_layer_create(GRect(0, 106, bounds.size.w, 24));
+  s_forecast_layer = text_layer_create(GRect(0, 130, bounds.size.w, 30));
+  // background color
+  text_layer_set_background_color(s_battery_layer, GColorClear);
   text_layer_set_background_color(s_time_layer, GColorClear);
-  text_layer_set_text_color(s_time_layer, GColorOrange);
-  text_layer_set_text(s_time_layer, "00:00");
-  // Create GFont
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_BODON_FLF_ROMAN_36));
-  // Apply to TextLayer
-  text_layer_set_font(s_time_layer, s_time_font);
-  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
-
-  // Style the text
+  text_layer_set_background_color(s_date_top_layer, GColorClear);
+  text_layer_set_background_color(s_date_btm_layer, GColorClear);
   text_layer_set_background_color(s_weather_layer, GColorClear);
+  text_layer_set_background_color(s_forecast_layer, GColorClear);
+  // forecolor
+  text_layer_set_text_color(s_battery_layer, GColorWhite);
+  text_layer_set_text_color(s_time_layer, GColorOrange);
+  text_layer_set_text_color(s_date_top_layer, GColorWhite);
+  text_layer_set_text_color(s_date_btm_layer, GColorWhite);
   text_layer_set_text_color(s_weather_layer, GColorWhite);
-  // Create GFont
-  s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_BODON_FLF_ROMAN_18));
-  // Apply to TextLayer
+  text_layer_set_text_color(s_forecast_layer, GColorWhite);
+  // font
+  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
+  text_layer_set_font(s_battery_layer, s_battery_font);
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_36));
+  text_layer_set_font(s_time_layer, s_time_font);
+  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_14));
+  text_layer_set_font(s_date_top_layer, s_date_font);
+  text_layer_set_font(s_date_btm_layer, s_date_font);
+  s_weather_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_18));
   text_layer_set_font(s_weather_layer, s_weather_font);
+  s_forecast_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
+  text_layer_set_font(s_forecast_layer, s_forecast_font);
+  // alignment
+  text_layer_set_text_alignment(s_battery_layer, GTextAlignmentRight);
+  text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(s_date_top_layer, GTextAlignmentLeft);
+  text_layer_set_text_alignment(s_date_btm_layer, GTextAlignmentRight);
   text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
-  text_layer_set_text(s_weather_layer, "Loading...");
+  text_layer_set_text_alignment(s_forecast_layer, GTextAlignmentCenter);
 
   // Battery
   BatteryChargeState charge_state = battery_state_service_peek();
   snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
   text_layer_set_text(s_battery_layer, s_battery_buffer);
-  text_layer_set_background_color(s_battery_layer, GColorClear);
-  text_layer_set_text_color(s_battery_layer, GColorWhite);
-  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_BODON_FLF_ROMAN_12));
-  text_layer_set_font(s_battery_layer, s_battery_font);
-  text_layer_set_text_alignment(s_battery_layer, GTextAlignmentRight);
+  // Time
+  text_layer_set_text(s_time_layer, "00:00");
+  // Date
+  text_layer_set_text(s_date_top_layer, "Sunday");
+  text_layer_set_text(s_date_btm_layer, "26 October");
+  // Weather
+  text_layer_set_text(s_weather_layer, "Loading...");
+  // Forecast
+  text_layer_set_text(s_forecast_layer, "Loading...");
 
   // Add it as a child layer to the Window's root layer
-  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_battery_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_top_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_btm_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer));
 
   battery_state_service_subscribe(battery_handler);
 }
 
 static void main_window_unload(Window *window) {
   // Destroy TextLayer
-  text_layer_destroy(s_time_layer);
-  text_layer_destroy(s_weather_layer);
   text_layer_destroy(s_battery_layer);
+  text_layer_destroy(s_time_layer);
+  text_layer_destroy(s_date_top_layer);
+  text_layer_destroy(s_date_btm_layer);
+  text_layer_destroy(s_weather_layer);
+  text_layer_destroy(s_forecast_layer);
   // Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
   // Destroy BitmapLayer
   bitmap_layer_destroy(s_background_layer);
   // Unload GFont
-  fonts_unload_custom_font(s_time_font);
-  fonts_unload_custom_font(s_weather_font);
   fonts_unload_custom_font(s_battery_font);
+  fonts_unload_custom_font(s_time_font);
+  fonts_unload_custom_font(s_date_font);
+  fonts_unload_custom_font(s_weather_font);
+  fonts_unload_custom_font(s_forecast_font);
   // Battery State Service
   battery_state_service_unsubscribe();
 }
@@ -139,6 +175,7 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s  %s", temperature_buffer, conditions_buffer);
     text_layer_set_text(s_weather_layer, weather_layer_buffer);
   }
+  text_layer_set_text(s_forecast_layer, "");
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
