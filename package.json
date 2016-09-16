@@ -17,6 +17,18 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/bt-d.png",
+                    "name": "IMAGE_BT_DISCONN",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/bt-c.png",
+                    "name": "IMAGE_BT_CONN",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "fonts/AppleGaramond.ttf",
                     "name": "APPLE_GARAMOND_12",
                     "targetPlatforms": null,

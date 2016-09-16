@@ -1,8 +1,8 @@
 #include <pebble.h>
 
 static Window *s_main_window;
-static BitmapLayer *s_background_layer;
-static GBitmap *s_background_bitmap;
+static BitmapLayer *s_background_layer, *s_bt_icon_layer;
+static GBitmap *s_background_bitmap, *s_bt_icon_bitmap;
 static TextLayer *s_battery_layer;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_top_layer;
@@ -15,6 +15,16 @@ static GFont s_date_font;
 static GFont s_weather_font;
 static GFont s_forecast_font;
 static char s_battery_buffer[16];
+
+static void bluetooth_callback(bool connected) {
+  // Show icon if disconnected
+  layer_set_hidden(bitmap_layer_get_layer(s_bt_icon_layer), connected);
+
+  if(!connected) {
+    // Issue a vibrating alert
+    vibes_double_pulse();
+  }
+}
 
 static void battery_handler(BatteryChargeState charge_state) {
   snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
@@ -47,11 +57,16 @@ static void main_window_load(Window *window) {
 
   // Create GBitmap
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
+  s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_DISCONN);
   // Create BitmapLayer to display the GBitmap
   s_background_layer = bitmap_layer_create(bounds);
   // Set the bitmap onto the layer and add to the window
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_background_layer));
+  // bluetooth
+  s_bt_icon_layer = bitmap_layer_create(GRect(10, 12, 18, 18));
+  bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bt_icon_layer));
 
   // Create the TextLayer with specific bounds
   s_battery_layer = text_layer_create(GRect(10, 10, bounds.size.w - 20, 18));
@@ -116,6 +131,9 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer));
 
+  // Show the correct state of the BT connection from the start
+  bluetooth_callback(connection_service_peek_pebble_app_connection());
+
   battery_state_service_subscribe(battery_handler);
 }
 
@@ -129,8 +147,10 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_forecast_layer);
   // Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
+  gbitmap_destroy(s_bt_icon_bitmap);
   // Destroy BitmapLayer
   bitmap_layer_destroy(s_background_layer);
+  bitmap_layer_destroy(s_bt_icon_layer);
   // Unload GFont
   fonts_unload_custom_font(s_battery_font);
   fonts_unload_custom_font(s_time_font);
@@ -213,6 +233,11 @@ static void init() {
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
+
+  // Register for Bluetooth connection updates
+  connection_service_subscribe((ConnectionHandlers) {
+    .pebble_app_connection_handler = bluetooth_callback
+  });
 
   // Open AppMessage
   const int inbox_size = 128;
