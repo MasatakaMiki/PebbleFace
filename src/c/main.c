@@ -1,28 +1,19 @@
 #include <pebble.h>
 
 static Window *s_main_window;
-static TextLayer *s_time_layer;
-static TextLayer *s_weather_layer;
-static GFont s_time_font;
-static GFont s_weather_font;
 static BitmapLayer *s_background_layer;
 static GBitmap *s_background_bitmap;
-static int s_battery_level;
-static Layer *s_battery_layer;
+static TextLayer *s_battery_layer;
+static TextLayer *s_time_layer;
+static TextLayer *s_weather_layer;
+static GFont s_battery_font;
+static GFont s_time_font;
+static GFont s_weather_font;
+static char s_battery_buffer[16];
 
-static void battery_update_proc(Layer *layer, GContext *ctx) {
-  GRect bounds = layer_get_bounds(layer);
-
-  // Find the width of the bar
-  int width = (int)(float)(((float)s_battery_level / 100.0F) * 114.0F);
-
-  // Draw the background
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-
-  // Draw the bar
-  graphics_context_set_fill_color(ctx, GColorWhite);
-  graphics_fill_rect(ctx, GRect(0, 0, width, bounds.size.h), 0, GCornerNone);
+static void battery_handler(BatteryChargeState charge_state) {
+  snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
+  text_layer_set_text(s_battery_layer, s_battery_buffer);
 }
 
 static void update_time() {
@@ -46,30 +37,23 @@ static void main_window_load(Window *window) {
 
   // Create GBitmap
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
-
   // Create BitmapLayer to display the GBitmap
   s_background_layer = bitmap_layer_create(bounds);
-
   // Set the bitmap onto the layer and add to the window
   bitmap_layer_set_bitmap(s_background_layer, s_background_bitmap);
   layer_add_child(window_layer, bitmap_layer_get_layer(s_background_layer));
 
   // Create the TextLayer with specific bounds
-  // s_time_layer = text_layer_create(
-  //   GRect(0, PBL_IF_ROUND_ELSE(58, 52), bounds.size.w, 50));
-  s_time_layer = text_layer_create(
-    GRect(0, 36, bounds.size.w, 48));
+  s_time_layer = text_layer_create(GRect(0, 36, bounds.size.w, 48));
   // Create temperature Layer
-  s_weather_layer = text_layer_create(
-    GRect(0, 96, bounds.size.w, 24));
+  s_weather_layer = text_layer_create(GRect(0, 96, bounds.size.w, 24));
+  // Create battery Layer
+  s_battery_layer = text_layer_create(GRect(10, 10, bounds.size.w - 20, 18));
   
   // Improve the layout to be more like a watchface
   text_layer_set_background_color(s_time_layer, GColorClear);
-  // text_layer_set_text_color(s_time_layer, GColorBlack);
   text_layer_set_text_color(s_time_layer, GColorOrange);
   text_layer_set_text(s_time_layer, "00:00");
-  // text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_42_BOLD));
-  // text_layer_set_font(s_time_layer, fonts_get_system_font(FONT_KEY_BITHAM_34_MEDIUM_NUMBERS));
   // Create GFont
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_BODON_FLF_ROMAN_36));
   // Apply to TextLayer
@@ -86,20 +70,29 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_weather_layer, GTextAlignmentCenter);
   text_layer_set_text(s_weather_layer, "Loading...");
 
-  // Create battery meter Layer
-  s_battery_layer = layer_create(GRect(14, 54, 115, 2));
-  layer_set_update_proc(s_battery_layer, battery_update_proc);
+  // Battery
+  BatteryChargeState charge_state = battery_state_service_peek();
+  snprintf(s_battery_buffer, sizeof(s_battery_buffer), "%d%%", charge_state.charge_percent);
+  text_layer_set_text(s_battery_layer, s_battery_buffer);
+  text_layer_set_background_color(s_battery_layer, GColorClear);
+  text_layer_set_text_color(s_battery_layer, GColorWhite);
+  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_BODON_FLF_ROMAN_12));
+  text_layer_set_font(s_battery_layer, s_battery_font);
+  text_layer_set_text_alignment(s_battery_layer, GTextAlignmentRight);
 
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_weather_layer));
-  layer_add_child(window_get_root_layer(window), s_battery_layer);
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_battery_layer));
+
+  battery_state_service_subscribe(battery_handler);
 }
 
 static void main_window_unload(Window *window) {
   // Destroy TextLayer
   text_layer_destroy(s_time_layer);
   text_layer_destroy(s_weather_layer);
+  text_layer_destroy(s_battery_layer);
   // Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
   // Destroy BitmapLayer
@@ -107,8 +100,9 @@ static void main_window_unload(Window *window) {
   // Unload GFont
   fonts_unload_custom_font(s_time_font);
   fonts_unload_custom_font(s_weather_font);
-
-  layer_destroy(s_battery_layer);
+  fonts_unload_custom_font(s_battery_font);
+  // Battery State Service
+  battery_state_service_unsubscribe();
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
@@ -139,10 +133,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   // If all data is available, use it
   if(temp_tuple && conditions_tuple) {
-    snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°C", (int)temp_tuple->value->int32);
+    snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°c", (int)temp_tuple->value->int32);
     snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
     // Assemble full string and display
-    snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s, %s", temperature_buffer, conditions_buffer);
+    snprintf(weather_layer_buffer, sizeof(weather_layer_buffer), "%s  %s", temperature_buffer, conditions_buffer);
     text_layer_set_text(s_weather_layer, weather_layer_buffer);
   }
 }
@@ -157,14 +151,6 @@ static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResul
 
 static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Outbox send success!");
-}
-
-static void battery_callback(BatteryChargeState state) {
-  // Record the new battery level
-  s_battery_level = state.charge_percent;
-
-  // Update meter
-  layer_mark_dirty(s_battery_layer);
 }
 
 static void init() {
@@ -185,17 +171,11 @@ static void init() {
 
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
-
   // Register callbacks
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
-
-  // Register for battery level updates
-  battery_state_service_subscribe(battery_callback);
-  // Ensure battery level is displayed from the start
-  battery_callback(battery_state_service_peek());
 
   // Open AppMessage
   const int inbox_size = 128;
