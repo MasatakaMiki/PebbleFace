@@ -10,12 +10,143 @@
         "displayName": "Tutorial-build-a-watchface-in-c",
         "enableMultiJS": true,
         "messageKeys": [
+            "REQSTATUS",
             "TEMPERATURE",
-            "CONDITIONS"
+            "CONDITIONS",
+            "ICONNAME",
+            "LOCALNAME",
+            "FORECAST1T",
+            "FORECAST2T",
+            "FORECAST3T",
+            "FORECAST4T",
+            "FORECAST1D",
+            "FORECAST2D",
+            "FORECAST3D",
+            "FORECAST4D"
         ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/99.png",
+                    "name": "IMAGE_W_99",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/50n.png",
+                    "name": "IMAGE_W_50N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/50d.png",
+                    "name": "IMAGE_W_50D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/13n.png",
+                    "name": "IMAGE_W_13N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/13d.png",
+                    "name": "IMAGE_W_13D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/11n.png",
+                    "name": "IMAGE_W_11N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/11d.png",
+                    "name": "IMAGE_W_11D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/10n.png",
+                    "name": "IMAGE_W_10N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/10d.png",
+                    "name": "IMAGE_W_10D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/09n.png",
+                    "name": "IMAGE_W_09N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/09d.png",
+                    "name": "IMAGE_W_09D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/04n.png",
+                    "name": "IMAGE_W_04N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/04d.png",
+                    "name": "IMAGE_W_04D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/03n.png",
+                    "name": "IMAGE_W_03N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/03d.png",
+                    "name": "IMAGE_W_03D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/02n.png",
+                    "name": "IMAGE_W_02N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/02d.png",
+                    "name": "IMAGE_W_02D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/01n.png",
+                    "name": "IMAGE_W_01N",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/01d.png",
+                    "name": "IMAGE_W_01D",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/00.png",
+                    "name": "IMAGE_W_00",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
                 {
                     "file": "images/bt-d.png",
                     "name": "IMAGE_BT_DISCONN",
@@ -54,13 +185,13 @@
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_14",
+                    "name": "APPLE_GARAMOND_BOLD_10",
                     "targetPlatforms": null,
                     "type": "font"
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_12",
+                    "name": "APPLE_GARAMOND_BOLD_36",
                     "targetPlatforms": null,
                     "type": "font"
                 },
@@ -72,15 +203,15 @@
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_36",
+                    "name": "APPLE_GARAMOND_BOLD_12",
                     "targetPlatforms": null,
                     "type": "font"
                 },
                 {
-                    "file": "images/background_10.png",
-                    "name": "IMAGE_BACKGROUND_10",
+                    "file": "fonts/AppleGaramond-Bold.ttf",
+                    "name": "APPLE_GARAMOND_BOLD_14",
                     "targetPlatforms": null,
-                    "type": "bitmap"
+                    "type": "font"
                 },
                 {
                     "file": "images/background.png",
