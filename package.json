@@ -28,6 +28,12 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/00m.png",
+                    "name": "IMAGE_W_00_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/99.png",
                     "name": "IMAGE_W_99",
                     "targetPlatforms": null,
@@ -160,44 +166,26 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "fonts/AppleGaramond.ttf",
-                    "name": "APPLE_GARAMOND_12",
-                    "targetPlatforms": null,
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/AppleGaramond.ttf",
-                    "name": "APPLE_GARAMOND_18",
-                    "targetPlatforms": null,
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/AppleGaramond-Light.ttf",
-                    "name": "APPLE_GARAMOND_LIGHT_12",
-                    "targetPlatforms": null,
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/AppleGaramond-Light.ttf",
-                    "name": "APPLE_GARAMOND_LIGHT_18",
+                    "file": "fonts/AppleGaramond-Bold.ttf",
+                    "name": "APPLE_GARAMOND_BOLD_40",
                     "targetPlatforms": null,
                     "type": "font"
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_10",
+                    "name": "APPLE_GARAMOND_BOLD_20",
                     "targetPlatforms": null,
                     "type": "font"
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_36",
+                    "name": "APPLE_GARAMOND_BOLD_16",
                     "targetPlatforms": null,
                     "type": "font"
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_18",
+                    "name": "APPLE_GARAMOND_BOLD_14",
                     "targetPlatforms": null,
                     "type": "font"
                 },
@@ -209,7 +197,7 @@
                 },
                 {
                     "file": "fonts/AppleGaramond-Bold.ttf",
-                    "name": "APPLE_GARAMOND_BOLD_14",
+                    "name": "APPLE_GARAMOND_BOLD_10",
                     "targetPlatforms": null,
                     "type": "font"
                 },

@@ -3,13 +3,15 @@
 static Window *s_main_window;
 static BitmapLayer *s_background_layer, *s_bt_icon_layer;
 static BitmapLayer *s_weather_icon_layer;
+static BitmapLayer *s_forecast_icon_layer_1, *s_forecast_icon_layer_2, *s_forecast_icon_layer_3, *s_forecast_icon_layer_4;
 static GBitmap *s_background_bitmap, *s_bt_icon_bitmap;
 static GBitmap *s_weather_icon_bitmap;
+static GBitmap *s_forecast_icon_bitmap_1, *s_forecast_icon_bitmap_2, *s_forecast_icon_bitmap_3, *s_forecast_icon_bitmap_4;
 static TextLayer *s_battery_layer;
 static TextLayer *s_time_layer;
 static TextLayer *s_date_top_layer, *s_date_btm_layer;
 static TextLayer *s_temperature_layer, *s_local_layer;
-static TextLayer *s_forecast_layer;
+static TextLayer *s_forecast_layer_1, *s_forecast_layer_2, *s_forecast_layer_3, *s_forecast_layer_4;
 static GFont s_battery_font;
 static GFont s_time_font;
 static GFont s_date_font;
@@ -55,6 +57,14 @@ static void update_time() {
   text_layer_set_text(s_time_layer, s_time_buffer);
   text_layer_set_text(s_date_top_layer, s_date_top_buffer);
   text_layer_set_text(s_date_btm_layer, s_date_btm_buffer);
+  //Date Color
+  if(strcmp(s_date_top_buffer, "Sunday") == 0) {
+    text_layer_set_text_color(s_date_top_layer, GColorRed);
+  } else if(strcmp(s_date_top_buffer, "Saturday") == 0) {
+    text_layer_set_text_color(s_date_top_layer, GColorBlue);
+  } else {
+    text_layer_set_text_color(s_date_top_layer, GColorWhite);
+  }
 }
 
 static void main_window_load(Window *window) {
@@ -65,7 +75,11 @@ static void main_window_load(Window *window) {
   // Create GBitmap
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_DISCONN);
-  s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00);
+  s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99);
+  s_forecast_icon_bitmap_1 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
+  s_forecast_icon_bitmap_2 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
+  s_forecast_icon_bitmap_3 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
+  s_forecast_icon_bitmap_4 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
   // Create BitmapLayer to display the GBitmap
   s_background_layer = bitmap_layer_create(bounds);
   // Set the bitmap onto the layer and add to the window
@@ -76,18 +90,34 @@ static void main_window_load(Window *window) {
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bt_icon_layer));
   // weather
-  s_weather_icon_layer = bitmap_layer_create(GRect(20, 98, 50, 30));
+  s_weather_icon_layer = bitmap_layer_create(GRect(10, 98, 50, 30));
   bitmap_layer_set_bitmap(s_weather_icon_layer, s_weather_icon_bitmap);
   layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_weather_icon_layer));
+  // forecast
+  s_forecast_icon_layer_1 = bitmap_layer_create(GRect(11, 134, 30, 18));
+  bitmap_layer_set_bitmap(s_forecast_icon_layer_1, s_forecast_icon_bitmap_1);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_1));
+  s_forecast_icon_layer_2 = bitmap_layer_create(GRect(42, 134, 30, 18));
+  bitmap_layer_set_bitmap(s_forecast_icon_layer_2, s_forecast_icon_bitmap_2);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_2));
+  s_forecast_icon_layer_3 = bitmap_layer_create(GRect(73, 134, 30, 18));
+  bitmap_layer_set_bitmap(s_forecast_icon_layer_3, s_forecast_icon_bitmap_3);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_3));
+  s_forecast_icon_layer_4 = bitmap_layer_create(GRect(104, 134, 30, 18));
+  bitmap_layer_set_bitmap(s_forecast_icon_layer_4, s_forecast_icon_bitmap_4);
+  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_4));
 
   // Create the TextLayer with specific bounds
-  s_battery_layer = text_layer_create(GRect(10, 10, bounds.size.w - 20, 18));
-  s_time_layer = text_layer_create(GRect(0, 24, bounds.size.w, 46));
-  s_date_top_layer = text_layer_create(GRect(20, 66, bounds.size.w - 40, 18));
-  s_date_btm_layer = text_layer_create(GRect(20, 80, bounds.size.w - 40, 18));
-  s_temperature_layer = text_layer_create(GRect(60, 98, bounds.size.w - 80, 20));
-  s_local_layer = text_layer_create(GRect(60, 116, bounds.size.w - 80, 12));
-  s_forecast_layer = text_layer_create(GRect(10, 128, bounds.size.w - 20, 30));
+  s_battery_layer = text_layer_create(GRect(10, 5, bounds.size.w - 20, 18));
+  s_time_layer = text_layer_create(GRect(0, 14, bounds.size.w, 46));
+  s_date_top_layer = text_layer_create(GRect(16, 56, bounds.size.w - 32, 20));
+  s_date_btm_layer = text_layer_create(GRect(16, 76, bounds.size.w - 32, 20));
+  s_temperature_layer = text_layer_create(GRect(50, 92, bounds.size.w - 60, 24));
+  s_local_layer = text_layer_create(GRect(50, 112, bounds.size.w - 60, 16));
+  s_forecast_layer_1 = text_layer_create(GRect(11, 144, 30, 12));
+  s_forecast_layer_2 = text_layer_create(GRect(42, 144, 30, 12));
+  s_forecast_layer_3 = text_layer_create(GRect(73, 144, 30, 12));
+  s_forecast_layer_4 = text_layer_create(GRect(104, 144, 30, 12));
   // background color
   text_layer_set_background_color(s_battery_layer, GColorClear);
   text_layer_set_background_color(s_time_layer, GColorClear);
@@ -95,7 +125,10 @@ static void main_window_load(Window *window) {
   text_layer_set_background_color(s_date_btm_layer, GColorClear);
   text_layer_set_background_color(s_temperature_layer, GColorClear);
   text_layer_set_background_color(s_local_layer, GColorClear);
-  text_layer_set_background_color(s_forecast_layer, GColorClear);
+  text_layer_set_background_color(s_forecast_layer_1, GColorClear);
+  text_layer_set_background_color(s_forecast_layer_2, GColorClear);
+  text_layer_set_background_color(s_forecast_layer_3, GColorClear);
+  text_layer_set_background_color(s_forecast_layer_4, GColorClear);
   // forecolor
   text_layer_set_text_color(s_battery_layer, GColorWhite);
   text_layer_set_text_color(s_time_layer, GColorOrange);
@@ -103,21 +136,27 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_date_btm_layer, GColorYellow);
   text_layer_set_text_color(s_temperature_layer, GColorWhite);
   text_layer_set_text_color(s_local_layer, GColorWhite);
-  text_layer_set_text_color(s_forecast_layer, GColorWhite);
+  text_layer_set_text_color(s_forecast_layer_1, GColorWhite);
+  text_layer_set_text_color(s_forecast_layer_2, GColorWhite);
+  text_layer_set_text_color(s_forecast_layer_3, GColorWhite);
+  text_layer_set_text_color(s_forecast_layer_4, GColorWhite);
   // font
   s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
   text_layer_set_font(s_battery_layer, s_battery_font);
-  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_36));
+  s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_40));
   text_layer_set_font(s_time_layer, s_time_font);
-  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_14));
+  s_date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_16));
   text_layer_set_font(s_date_top_layer, s_date_font);
   text_layer_set_font(s_date_btm_layer, s_date_font);
-  s_temperature_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_18));
+  s_temperature_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_20));
   text_layer_set_font(s_temperature_layer, s_temperature_font);
-  s_local_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_10));
+  s_local_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_14));
   text_layer_set_font(s_local_layer, s_local_font);
-  s_forecast_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
-  text_layer_set_font(s_forecast_layer, s_forecast_font);
+  s_forecast_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_10));
+  text_layer_set_font(s_forecast_layer_1, s_forecast_font);
+  text_layer_set_font(s_forecast_layer_2, s_forecast_font);
+  text_layer_set_font(s_forecast_layer_3, s_forecast_font);
+  text_layer_set_font(s_forecast_layer_4, s_forecast_font);
   // alignment
   text_layer_set_text_alignment(s_battery_layer, GTextAlignmentRight);
   text_layer_set_text_alignment(s_time_layer, GTextAlignmentCenter);
@@ -125,7 +164,10 @@ static void main_window_load(Window *window) {
   text_layer_set_text_alignment(s_date_btm_layer, GTextAlignmentRight);
   text_layer_set_text_alignment(s_temperature_layer, GTextAlignmentCenter);
   text_layer_set_text_alignment(s_local_layer, GTextAlignmentRight);
-  text_layer_set_text_alignment(s_forecast_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(s_forecast_layer_1, GTextAlignmentRight);
+  text_layer_set_text_alignment(s_forecast_layer_2, GTextAlignmentRight);
+  text_layer_set_text_alignment(s_forecast_layer_3, GTextAlignmentRight);
+  text_layer_set_text_alignment(s_forecast_layer_4, GTextAlignmentRight);
 
   // Battery
   BatteryChargeState charge_state = battery_state_service_peek();
@@ -147,7 +189,10 @@ static void main_window_load(Window *window) {
   text_layer_set_text(s_temperature_layer, "Loading...");
   text_layer_set_text(s_local_layer, "Loading...");
   // Forecast
-  text_layer_set_text(s_forecast_layer, "Loading...");
+  text_layer_set_text(s_forecast_layer_1, "");
+  text_layer_set_text(s_forecast_layer_2, "");
+  text_layer_set_text(s_forecast_layer_3, "");
+  text_layer_set_text(s_forecast_layer_4, "");
 
   // Add it as a child layer to the Window's root layer
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_battery_layer));
@@ -156,7 +201,10 @@ static void main_window_load(Window *window) {
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_btm_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_temperature_layer));
   layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_local_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_1));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_2));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_3));
+  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_4));
 
   // Show the correct state of the BT connection from the start
   bluetooth_callback(connection_service_peek_pebble_app_connection());
@@ -172,15 +220,26 @@ static void main_window_unload(Window *window) {
   text_layer_destroy(s_date_btm_layer);
   text_layer_destroy(s_temperature_layer);
   text_layer_destroy(s_local_layer);
-  text_layer_destroy(s_forecast_layer);
+  text_layer_destroy(s_forecast_layer_1);
+  text_layer_destroy(s_forecast_layer_2);
+  text_layer_destroy(s_forecast_layer_3);
+  text_layer_destroy(s_forecast_layer_4);
   // Destroy GBitmap
   gbitmap_destroy(s_background_bitmap);
   gbitmap_destroy(s_bt_icon_bitmap);
   gbitmap_destroy(s_weather_icon_bitmap);
+  gbitmap_destroy(s_forecast_icon_bitmap_1);
+  gbitmap_destroy(s_forecast_icon_bitmap_2);
+  gbitmap_destroy(s_forecast_icon_bitmap_3);
+  gbitmap_destroy(s_forecast_icon_bitmap_4);
   // Destroy BitmapLayer
   bitmap_layer_destroy(s_background_layer);
   bitmap_layer_destroy(s_bt_icon_layer);
   bitmap_layer_destroy(s_weather_icon_layer);
+  bitmap_layer_destroy(s_forecast_icon_layer_1);
+  bitmap_layer_destroy(s_forecast_icon_layer_2);
+  bitmap_layer_destroy(s_forecast_icon_layer_3);
+  bitmap_layer_destroy(s_forecast_icon_layer_4);
   // Unload GFont
   fonts_unload_custom_font(s_battery_font);
   fonts_unload_custom_font(s_time_font);
@@ -275,7 +334,10 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     }
     bitmap_layer_set_bitmap(s_weather_icon_layer, s_weather_icon_bitmap);
   }
-  text_layer_set_text(s_forecast_layer, "");
+  text_layer_set_text(s_forecast_layer_1, "3");
+  text_layer_set_text(s_forecast_layer_2, "6");
+  text_layer_set_text(s_forecast_layer_3, "9");
+  text_layer_set_text(s_forecast_layer_4, "12");
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
