@@ -10,23 +10,136 @@
         "displayName": "Tutorial-build-a-watchface-in-c",
         "enableMultiJS": true,
         "messageKeys": [
-            "REQSTATUS",
             "TEMPERATURE",
             "CONDITIONS",
             "ICONNAME",
             "LOCALNAME",
-            "FORECAST1T",
-            "FORECAST2T",
-            "FORECAST3T",
-            "FORECAST4T",
-            "FORECAST1D",
-            "FORECAST2D",
-            "FORECAST3D",
-            "FORECAST4D"
+            "FORECASTTIME1",
+            "FORECASTTIME2",
+            "FORECASTTIME3",
+            "FORECASTTIME4",
+            "FORECASTICONS1",
+            "FORECASTICONS2",
+            "FORECASTICONS3",
+            "FORECASTICONS4"
         ],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/50nm.png",
+                    "name": "IMAGE_W_50N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/50dm.png",
+                    "name": "IMAGE_W_50D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/13nm.png",
+                    "name": "IMAGE_W_13N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/13dm.png",
+                    "name": "IMAGE_W_13D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/11nm.png",
+                    "name": "IMAGE_W_11N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/11dm.png",
+                    "name": "IMAGE_W_11D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/10nm.png",
+                    "name": "IMAGE_W_10N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/10dm.png",
+                    "name": "IMAGE_W_10D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/09nm.png",
+                    "name": "IMAGE_W_09N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/09dm.png",
+                    "name": "IMAGE_W_09D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/04nm.png",
+                    "name": "IMAGE_W_04N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/04dm.png",
+                    "name": "IMAGE_W_04D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/03nm.png",
+                    "name": "IMAGE_W_03N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/03dm.png",
+                    "name": "IMAGE_W_03D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/02nm.png",
+                    "name": "IMAGE_W_02N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/02dm.png",
+                    "name": "IMAGE_W_02D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/01nm.png",
+                    "name": "IMAGE_W_01N_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/01dm.png",
+                    "name": "IMAGE_W_01D_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/99m.png",
+                    "name": "IMAGE_W_99_M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
                 {
                     "file": "images/00m.png",
                     "name": "IMAGE_W_00_M",

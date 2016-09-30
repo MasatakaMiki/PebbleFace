@@ -7,6 +7,11 @@ var xhrRequest = function (url, type, callback) {
   xhr.send();
 };
 
+function cDateFromUnixTimestamp(unixTimestamp) {
+  var date = new Date(unixTimestamp * 1000);
+  return date;
+}
+
 function locationSuccess(pos) {
   // We will request the weather here
   // Construct URL
@@ -17,61 +22,137 @@ function locationSuccess(pos) {
       lat + '&lon=' + lon + '&appid=' + myAPIKey;
   console.log('Url is ' + url);
 
+  var status_weather = '';
+  var temperature = 0;
+  var conditions = '';
+  var icon = '';
+  var name = '';
+  var status_forecast = '';
+  var forecasttime1 = '';
+  var forecasttime2 = '';
+  var forecasttime3 = '';
+  var forecasttime4 = '';
+  var forecasticon1 = '';
+  var forecasticon2 = '';
+  var forecasticon3 = '';
+  var forecasticon4 = '';
+
   // Send request to OpenWeatherMap
   xhrRequest(url, 'GET', 
     function(responseText) {
       // responseText contains a JSON object with weather info
-      var json = JSON.parse(responseText);
+      var json_weather = JSON.parse(responseText);
 
       // Status
-      var cod = json.cod;
-      console.log('Cod is ' + cod);
-      
-      var status = '';
-      var temperature = 0;
-      var conditions = '';
-      var icon = '';
-      var name = '';
+      var cod_weather = json_weather.cod;
+      console.log('Cod is ' + cod_weather);
 
-      if (cod === 200) {
-        status = 'success';
+      var dt_weather = 0;
+      if (cod_weather === 200) {
+        status_weather = 'success';
+        dt_weather = json_weather.dt;
         // Temperature in Kelvin requires adjustment
-        temperature = Math.round(json.main.temp - 273.15);
+        temperature = Math.round(json_weather.main.temp - 273.15);
         // Conditions
-        conditions = json.weather[0].main;
-        icon = json.weather[0].icon;
-        name = json.name;
-      } else if (cod === '404') {
-        status = json.message;
+        conditions = json_weather.weather[0].main;
+        icon = json_weather.weather[0].icon;
+        name = json_weather.name;
+      } else if (cod_weather === '404') {
+        status_weather = json_weather.message;
       } else {
-        status = 'failure';
+        status_weather = 'failure';
       }
 
-      console.log('Status is ' + status);
+      console.log('Status[W] is ' + status_weather);
       console.log('Temperature is ' + temperature);
       console.log('Conditions are ' + conditions);
       console.log('Icon is ' + icon);
       console.log('Name is ' + name);
 
-      // Assemble dictionary using our keys
-      var dictionary = {
-        'REQSTATUS': status,
-        'TEMPERATURE': temperature,
-        'CONDITIONS': conditions,
-        'ICONNAME': icon,
-        'LOCALNAME': name
-      };
+      var url_forecast = 'http://api.openweathermap.org/data/2.5/forecast?lat=' +
+        lat + '&lon=' + lon + '&appid=' + myAPIKey;
+      console.log('Url is ' + url_forecast);
 
-      // Send to Pebble
-      Pebble.sendAppMessage(dictionary,
-        function(e) {
-          console.log('Weather info sent to Pebble successfully!');
-        },
-        function(e) {
-          console.log('Error sending weather info to Pebble!');
+      // Send request to OpenWeatherMap
+      xhrRequest(url_forecast, 'GET', 
+        function(responseText) {
+          // responseText contains a JSON object with weather info
+          var json_forecast = JSON.parse(responseText);
+
+          // Status
+          var cod_forecast = json_forecast.cod;
+          console.log('Cod is ' + cod_forecast);
+
+          if (cod_forecast === '200') {
+            status_forecast = 'success';
+
+            // Replace weather date with unixTimestamp
+            var date = new Date();
+            dt_weather = Math.floor(date.getTime() / 1000);
+            console.log('dt_weather is ' + dt_weather);
+
+            var dt_forecast = 0;
+            var cnt = json_forecast.cnt;
+            var i = 0;
+            for (i = 0; i < cnt; i++) {
+              dt_forecast = json_forecast.list[i].dt;
+              console.log('dt_forecast is ' + dt_forecast);
+              if (dt_forecast > dt_weather) break;
+            }
+            if (i < cnt) {
+              console.log('i is ' + i);
+              console.log('dt_txt is ' + json_forecast.list[i].dt_txt);
+              forecasttime1 = cDateFromUnixTimestamp(json_forecast.list[i].dt).getHours().toString();
+              forecasticon1 = json_forecast.list[i].weather[0].icon;
+            }
+            if (i + 1 < cnt) {
+              forecasttime2 = cDateFromUnixTimestamp(json_forecast.list[i + 1].dt).getHours().toString();
+              forecasticon2 = json_forecast.list[i + 1].weather[0].icon;
+            }
+            if (i + 2 < cnt) {
+              forecasttime3 = cDateFromUnixTimestamp(json_forecast.list[i + 2].dt).getHours().toString();
+              forecasticon3 = json_forecast.list[i + 2].weather[0].icon;
+            }
+            if (i + 3 < cnt) {
+              forecasttime4 = cDateFromUnixTimestamp(json_forecast.list[i + 3].dt).getHours().toString();
+              forecasticon4 = json_forecast.list[i + 3].weather[0].icon;
+            }
+          } else if (cod_forecast === '404') {
+            status_forecast = json_forecast.message;
+          } else {
+            status_forecast = 'failure';
+          }
+
+          console.log('Status[F] is ' + status_forecast);
+
+          // Assemble dictionary using our keys
+          var dictionary = {
+            'TEMPERATURE': temperature,
+            'CONDITIONS': conditions,
+            'ICONNAME': icon,
+            'LOCALNAME': name,
+            'FORECASTTIME1': forecasttime1,
+            'FORECASTTIME2': forecasttime2,
+            'FORECASTTIME3': forecasttime3,
+            'FORECASTTIME4': forecasttime4,
+            'FORECASTICONS1': forecasticon1,
+            'FORECASTICONS2': forecasticon2,
+            'FORECASTICONS3': forecasticon3,
+            'FORECASTICONS4': forecasticon4
+          };
+
+          // Send to Pebble
+          Pebble.sendAppMessage(dictionary,
+            function(e) {
+              console.log('Weather info sent to Pebble successfully!');
+            },
+            function(e) {
+              console.log('Error sending weather info to Pebble!');
+            }
+          );
         }
       );
-    }      
+    }
   );
 }
 
@@ -102,5 +183,5 @@ Pebble.addEventListener('appmessage',
   function(e) {
     console.log('AppMessage received!');
     getWeather();
-  }                     
+  }
 );

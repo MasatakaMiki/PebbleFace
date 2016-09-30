@@ -76,10 +76,10 @@ static void main_window_load(Window *window) {
   s_background_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BACKGROUND);
   s_bt_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BT_DISCONN);
   s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99);
-  s_forecast_icon_bitmap_1 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
-  s_forecast_icon_bitmap_2 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
-  s_forecast_icon_bitmap_3 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
-  s_forecast_icon_bitmap_4 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_00_M);
+  s_forecast_icon_bitmap_1 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99_M);
+  s_forecast_icon_bitmap_2 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99_M);
+  s_forecast_icon_bitmap_3 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99_M);
+  s_forecast_icon_bitmap_4 = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99_M);
   // Create BitmapLayer to display the GBitmap
   s_background_layer = bitmap_layer_create(bounds);
   // Set the bitmap onto the layer and add to the window
@@ -111,7 +111,7 @@ static void main_window_load(Window *window) {
   s_battery_layer = text_layer_create(GRect(10, 5, bounds.size.w - 20, 18));
   s_time_layer = text_layer_create(GRect(0, 14, bounds.size.w, 46));
   s_date_top_layer = text_layer_create(GRect(16, 56, bounds.size.w - 32, 20));
-  s_date_btm_layer = text_layer_create(GRect(16, 76, bounds.size.w - 32, 20));
+  s_date_btm_layer = text_layer_create(GRect(16, 72, bounds.size.w - 32, 20));
   s_temperature_layer = text_layer_create(GRect(50, 92, bounds.size.w - 60, 24));
   s_local_layer = text_layer_create(GRect(50, 112, bounds.size.w - 60, 16));
   s_forecast_layer_1 = text_layer_create(GRect(11, 144, 30, 12));
@@ -268,23 +268,123 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   }
 }
 
+uint32_t get_weather_resource_id_by_iconname(char iconname_buffer[8]) {
+  uint32_t resource_id = RESOURCE_ID_IMAGE_W_99;
+  if(strcmp(iconname_buffer, "01d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_01D;
+  } else if(strcmp(iconname_buffer, "01n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_01N;
+  } else if(strcmp(iconname_buffer, "02d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_02D;
+  } else if(strcmp(iconname_buffer, "02n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_02N;
+  } else if(strcmp(iconname_buffer, "03d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_03D;
+  } else if(strcmp(iconname_buffer, "03n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_03N;
+  } else if(strcmp(iconname_buffer, "04d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_04D;
+  } else if(strcmp(iconname_buffer, "04n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_04N;
+  } else if(strcmp(iconname_buffer, "09d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_09D;
+  } else if(strcmp(iconname_buffer, "09n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_09N;
+  } else if(strcmp(iconname_buffer, "10d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_10D;
+  } else if(strcmp(iconname_buffer, "10n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_10N;
+  } else if(strcmp(iconname_buffer, "11d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_11D;
+  } else if(strcmp(iconname_buffer, "11n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_11N;
+  } else if(strcmp(iconname_buffer, "13d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_13D;
+  } else if(strcmp(iconname_buffer, "13n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_13N;
+  } else if(strcmp(iconname_buffer, "50d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_50D;
+  } else if(strcmp(iconname_buffer, "50n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_50N;
+  }
+  return resource_id;
+}
+
+uint32_t get_forecast_resource_id_by_iconname(char iconname_buffer[8]) {
+  uint32_t resource_id = RESOURCE_ID_IMAGE_W_99_M;
+  if(strcmp(iconname_buffer, "01d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_01D_M;
+  } else if(strcmp(iconname_buffer, "01n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_01N_M;
+  } else if(strcmp(iconname_buffer, "02d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_02D_M;
+  } else if(strcmp(iconname_buffer, "02n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_02N_M;
+  } else if(strcmp(iconname_buffer, "03d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_03D_M;
+  } else if(strcmp(iconname_buffer, "03n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_03N_M;
+  } else if(strcmp(iconname_buffer, "04d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_04D_M;
+  } else if(strcmp(iconname_buffer, "04n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_04N_M;
+  } else if(strcmp(iconname_buffer, "09d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_09D_M;
+  } else if(strcmp(iconname_buffer, "09n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_09N_M;
+  } else if(strcmp(iconname_buffer, "10d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_10D_M;
+  } else if(strcmp(iconname_buffer, "10n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_10N_M;
+  } else if(strcmp(iconname_buffer, "11d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_11D_M;
+  } else if(strcmp(iconname_buffer, "11n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_11N_M;
+  } else if(strcmp(iconname_buffer, "13d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_13D_M;
+  } else if(strcmp(iconname_buffer, "13n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_13N_M;
+  } else if(strcmp(iconname_buffer, "50d") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_50D_M;
+  } else if(strcmp(iconname_buffer, "50n") == 0) {
+    resource_id = RESOURCE_ID_IMAGE_W_50N_M;
+  }
+  return resource_id;
+}
+
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
   // Store incoming information
-  static char status_buffer[16];
   static char temperature_buffer[8];
   static char conditions_buffer[32];
   static char icon_buffer[8];
   static char local_buffer[32];
+  
+  static char forecasttime1_buffer[4];
+  static char forecasttime2_buffer[4];
+  static char forecasttime3_buffer[4];
+  static char forecasttime4_buffer[4];
+  static char forecasticon1_buffer[8];
+  static char forecasticon2_buffer[8];
+  static char forecasticon3_buffer[8];
+  static char forecasticon4_buffer[8];
+
   // Read tuples for data
-  Tuple *status_tuple = dict_find(iterator, MESSAGE_KEY_REQSTATUS);
   Tuple *temp_tuple = dict_find(iterator, MESSAGE_KEY_TEMPERATURE);
   Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_CONDITIONS);
   Tuple *icon_tuple = dict_find(iterator, MESSAGE_KEY_ICONNAME);
   Tuple *local_tuple = dict_find(iterator, MESSAGE_KEY_LOCALNAME);
 
+  Tuple *fcsttime1_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME1);
+  Tuple *fcsttime2_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME2);
+  Tuple *fcsttime3_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME3);
+  Tuple *fcsttime4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME4);
+  Tuple *fcsticon1_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS1);
+  Tuple *fcsticon2_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS2);
+  Tuple *fcsticon3_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS3);
+  Tuple *fcsticon4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS4);
+
   // If all data is available, use it
   if(temp_tuple && conditions_tuple) {
-    snprintf(status_buffer, sizeof(status_buffer), "%s", status_tuple->value->cstring);
     snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°c", (int)temp_tuple->value->int32);
     snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
     snprintf(icon_buffer, sizeof(icon_buffer), "%s", icon_tuple->value->cstring);
@@ -293,51 +393,39 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
     text_layer_set_text(s_temperature_layer, temperature_buffer);
     text_layer_set_text(s_local_layer, local_buffer);
     // Weather icon
-    if(strcmp(icon_buffer, "01d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_01D);
-    } else if(strcmp(icon_buffer, "01n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_01N);
-    } else if(strcmp(icon_buffer, "02d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_02D);
-    } else if(strcmp(icon_buffer, "02n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_02N);
-    } else if(strcmp(icon_buffer, "03d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_03D);
-    } else if(strcmp(icon_buffer, "03n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_03N);
-    } else if(strcmp(icon_buffer, "04d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_04D);
-    } else if(strcmp(icon_buffer, "04n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_04N);
-    } else if(strcmp(icon_buffer, "09d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_09D);
-    } else if(strcmp(icon_buffer, "09n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_09N);
-    } else if(strcmp(icon_buffer, "10d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_10D);
-    } else if(strcmp(icon_buffer, "10n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_10N);
-    } else if(strcmp(icon_buffer, "11d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_11D);
-    } else if(strcmp(icon_buffer, "11n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_11N);
-    } else if(strcmp(icon_buffer, "13d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_13D);
-    } else if(strcmp(icon_buffer, "13n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_13N);
-    } else if(strcmp(icon_buffer, "50d") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_50D);
-    } else if(strcmp(icon_buffer, "50n") == 0) {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_50N);
-    } else {
-      s_weather_icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_W_99);
-    }
+    uint32_t weather_resource_id = get_weather_resource_id_by_iconname(icon_buffer);
+    s_weather_icon_bitmap = gbitmap_create_with_resource(weather_resource_id);
     bitmap_layer_set_bitmap(s_weather_icon_layer, s_weather_icon_bitmap);
   }
-  text_layer_set_text(s_forecast_layer_1, "3");
-  text_layer_set_text(s_forecast_layer_2, "6");
-  text_layer_set_text(s_forecast_layer_3, "9");
-  text_layer_set_text(s_forecast_layer_4, "12");
+
+  if(fcsttime1_tuple && fcsticon1_tuple) {
+    snprintf(forecasttime1_buffer, sizeof(forecasttime1_buffer), "%s", fcsttime1_tuple->value->cstring);
+    snprintf(forecasttime2_buffer, sizeof(forecasttime2_buffer), "%s", fcsttime2_tuple->value->cstring);
+    snprintf(forecasttime3_buffer, sizeof(forecasttime3_buffer), "%s", fcsttime3_tuple->value->cstring);
+    snprintf(forecasttime4_buffer, sizeof(forecasttime4_buffer), "%s", fcsttime4_tuple->value->cstring);
+    snprintf(forecasticon1_buffer, sizeof(forecasticon1_buffer), "%s", fcsticon1_tuple->value->cstring);
+    snprintf(forecasticon2_buffer, sizeof(forecasticon2_buffer), "%s", fcsticon2_tuple->value->cstring);
+    snprintf(forecasticon3_buffer, sizeof(forecasticon3_buffer), "%s", fcsticon3_tuple->value->cstring);
+    snprintf(forecasticon4_buffer, sizeof(forecasticon4_buffer), "%s", fcsticon4_tuple->value->cstring);
+
+    text_layer_set_text(s_forecast_layer_1, forecasttime1_buffer);
+    text_layer_set_text(s_forecast_layer_2, forecasttime2_buffer);
+    text_layer_set_text(s_forecast_layer_3, forecasttime3_buffer);
+    text_layer_set_text(s_forecast_layer_4, forecasttime4_buffer);
+
+    uint32_t forecast_resource_id_1 = get_forecast_resource_id_by_iconname(forecasticon1_buffer);
+    s_forecast_icon_bitmap_1 = gbitmap_create_with_resource(forecast_resource_id_1);
+    bitmap_layer_set_bitmap(s_forecast_icon_layer_1, s_forecast_icon_bitmap_1);
+    uint32_t forecast_resource_id_2 = get_forecast_resource_id_by_iconname(forecasticon2_buffer);
+    s_forecast_icon_bitmap_2 = gbitmap_create_with_resource(forecast_resource_id_2);
+    bitmap_layer_set_bitmap(s_forecast_icon_layer_2, s_forecast_icon_bitmap_2);
+    uint32_t forecast_resource_id_3 = get_forecast_resource_id_by_iconname(forecasticon3_buffer);
+    s_forecast_icon_bitmap_3 = gbitmap_create_with_resource(forecast_resource_id_3);
+    bitmap_layer_set_bitmap(s_forecast_icon_layer_3, s_forecast_icon_bitmap_3);
+    uint32_t forecast_resource_id_4 = get_forecast_resource_id_by_iconname(forecasticon4_buffer);
+    s_forecast_icon_bitmap_4 = gbitmap_create_with_resource(forecast_resource_id_4);
+    bitmap_layer_set_bitmap(s_forecast_icon_layer_4, s_forecast_icon_bitmap_4);
+  }
 }
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
