@@ -1,3 +1,5 @@
+var debug_mode = false;
+
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
@@ -18,6 +20,10 @@ function locationSuccess(pos) {
   var myAPIKey = 'ea89120ba85fc38f32f1eebc9063f758';
   var lat = pos.coords.latitude;
   var lon = pos.coords.longitude;
+  if (debug_mode) {
+    lat = 33.586597;
+    lon = 130.396447;
+  }
   var url = 'http://api.openweathermap.org/data/2.5/weather?lat=' +
       lat + '&lon=' + lon + '&appid=' + myAPIKey;
   console.log('Url is ' + url);
@@ -56,6 +62,7 @@ function locationSuccess(pos) {
         // Conditions
         conditions = json_weather.weather[0].main;
         icon = json_weather.weather[0].icon;
+        if (debug_mode) icon = '01d';
         name = json_weather.name;
       } else if (cod_weather === '404') {
         status_weather = json_weather.message;

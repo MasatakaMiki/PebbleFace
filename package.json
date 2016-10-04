@@ -2,12 +2,12 @@
     "author": "masataka.miki@gmail.com",
     "dependencies": {},
     "keywords": [],
-    "name": "tutorial-build-a-watchface-in-c",
+    "name": "owm-forecastface",
     "pebble": {
         "capabilities": [
             "location"
         ],
-        "displayName": "Tutorial-build-a-watchface-in-c",
+        "displayName": "OWM ForecastFace",
         "enableMultiJS": true,
         "messageKeys": [
             "TEMPERATURE",
@@ -26,6 +26,13 @@
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/menu.png",
+                    "menuIcon": true,
+                    "name": "IMAGE_MENU",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
                 {
                     "file": "images/50nm.png",
                     "name": "IMAGE_W_50N_M",
