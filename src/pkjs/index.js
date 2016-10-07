@@ -1,4 +1,4 @@
-var debug_mode = false;
+var debug_mode = true;
 
 // Import the Clay package
 var Clay = require('pebble-clay');
@@ -74,9 +74,9 @@ function locationSuccess(pos) {
         if (debug_mode) icon = '01d';
         name = json_weather.name;
       } else if (cod_weather === '404') {
-        status_weather = json_weather.message;
+        status_weather = 'ERR_' + cod_weather; //json_weather.message;
       } else {
-        status_weather = 'failure';
+        status_weather = 'ERR_' + cod_weather;
       }
 
       console.log('Status[W] is ' + status_weather);
@@ -135,18 +135,25 @@ function locationSuccess(pos) {
               forecasticon4 = json_forecast.list[i + 3].weather[0].icon;
             }
           } else if (cod_forecast === '404') {
-            status_forecast = json_forecast.message;
+            status_forecast = 'ERR_' + cod_forecast; //json_forecast.message;
           } else {
-            status_forecast = 'failure';
+            status_forecast = 'ERR_' + cod_forecast;
           }
 
           console.log('Status[F] is ' + status_forecast);
+          console.log('Forecast Time 1 is ' + forecasttime1);
+          console.log('Forecast Time 2 is ' + forecasttime2);
+          console.log('Forecast Time 3 is ' + forecasttime3);
+          console.log('Forecast Time 4 is ' + forecasttime4);
+          console.log('Forecast Icon 1 is ' + forecasticon1);
+          console.log('Forecast Icon 2 is ' + forecasticon2);
+          console.log('Forecast Icon 3 is ' + forecasticon3);
+          console.log('Forecast Icon 4 is ' + forecasticon4);
 
           // Assemble dictionary using our keys
           var dictionary = {
             'TEMPERATURE_F': temperature_f,
             'TEMPERATURE_C': temperature_c,
-            'CONDITIONS': conditions,
             'ICONNAME': icon,
             'LOCALNAME': name,
             'FORECASTTIME1': forecasttime1,
@@ -166,6 +173,7 @@ function locationSuccess(pos) {
             },
             function(e) {
               console.log('Error sending weather info to Pebble!');
+              console.log('Message failed: ' + JSON.stringify(e));
             }
           );
         }

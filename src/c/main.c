@@ -384,7 +384,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
   // Store incoming information
   static char temperature_buffer[8];
-  static char conditions_buffer[32];
   static char icon_buffer[8];
   static char local_buffer[32];
   
@@ -400,7 +399,6 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   // Read tuples for data
   Tuple *temp_tuple_f = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_F);
   Tuple *temp_tuple_c = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_C);
-  Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_CONDITIONS);
   Tuple *icon_tuple = dict_find(iterator, MESSAGE_KEY_ICONNAME);
   Tuple *local_tuple = dict_find(iterator, MESSAGE_KEY_LOCALNAME);
 
@@ -414,13 +412,12 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *fcsticon4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS4);
 
   // If all data is available, use it
-  if(temp_tuple_f && conditions_tuple) {
+  if(temp_tuple_f && icon_tuple) {
     if (strcmp(settings.Temperature_scale, "celsius") == 0){
       snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°c", (int)temp_tuple_c->value->int32);
     }else{
       snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°f", (int)temp_tuple_f->value->int32);
     }
-    snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
     snprintf(icon_buffer, sizeof(icon_buffer), "%s", icon_tuple->value->cstring);
     snprintf(local_buffer, sizeof(local_buffer), "%s", local_tuple->value->cstring);
     // Assemble full string and display
@@ -464,6 +461,14 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
 
 static void inbox_dropped_callback(AppMessageResult reason, void *context) {
   APP_LOG(APP_LOG_LEVEL_ERROR, "Message dropped!");
+  text_layer_set_text(s_temperature_layer, "ERROR");
+  // Get a tm structure
+  time_t temp = time(NULL);
+  struct tm *tick_time = localtime(&temp);
+  // Write the current hours and minutes into a buffer
+  static char s_time_buffer[8];
+  strftime(s_time_buffer, sizeof(s_time_buffer), clock_is_24h_style() ? "%H:%M" : "%I:%M", tick_time);
+  text_layer_set_text(s_local_layer, s_time_buffer);
 }
 
 static void outbox_failed_callback(DictionaryIterator *iterator, AppMessageResult reason, void *context) {

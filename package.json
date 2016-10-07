@@ -16,7 +16,6 @@
             "TEMPERATURE_SCALE",
             "TEMPERATURE_F",
             "TEMPERATURE_C",
-            "CONDITIONS",
             "ICONNAME",
             "LOCALNAME",
             "FORECASTTIME1",
@@ -343,5 +342,5 @@
             "watchface": true
         }
     },
-    "version": "2.0.0"
+    "version": "2.2.0"
 }
