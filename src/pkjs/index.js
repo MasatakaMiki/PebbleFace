@@ -1,5 +1,12 @@
 var debug_mode = false;
 
+// Import the Clay package
+var Clay = require('pebble-clay');
+// Load our Clay configuration file
+var clayConfig = require('./config');
+// Initialize Clay
+var clay = new Clay(clayConfig);
+
 var xhrRequest = function (url, type, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onload = function () {
@@ -29,7 +36,8 @@ function locationSuccess(pos) {
   console.log('Url is ' + url);
 
   var status_weather = '';
-  var temperature = 0;
+  var temperature_f = 0;
+  var temperature_c = 0;
   var conditions = '';
   var icon = '';
   var name = '';
@@ -58,7 +66,8 @@ function locationSuccess(pos) {
         status_weather = 'success';
         dt_weather = json_weather.dt;
         // Temperature in Kelvin requires adjustment
-        temperature = Math.round(json_weather.main.temp - 273.15);
+        temperature_f = Math.round((json_weather.main.temp - 273.15) * 1.8000 + 32.00);        
+        temperature_c = Math.round(json_weather.main.temp - 273.15);
         // Conditions
         conditions = json_weather.weather[0].main;
         icon = json_weather.weather[0].icon;
@@ -71,7 +80,8 @@ function locationSuccess(pos) {
       }
 
       console.log('Status[W] is ' + status_weather);
-      console.log('Temperature is ' + temperature);
+      console.log('Temperature is ' + temperature_f + 'f');
+      console.log('Temperature is ' + temperature_c + 'c');
       console.log('Conditions are ' + conditions);
       console.log('Icon is ' + icon);
       console.log('Name is ' + name);
@@ -134,7 +144,8 @@ function locationSuccess(pos) {
 
           // Assemble dictionary using our keys
           var dictionary = {
-            'TEMPERATURE': temperature,
+            'TEMPERATURE_F': temperature_f,
+            'TEMPERATURE_C': temperature_c,
             'CONDITIONS': conditions,
             'ICONNAME': icon,
             'LOCALNAME': name,
@@ -179,7 +190,6 @@ function getWeather() {
 Pebble.addEventListener('ready', 
   function(e) {
     console.log('PebbleKit JS ready!');
-
     // Get the initial weather
     getWeather();
   }

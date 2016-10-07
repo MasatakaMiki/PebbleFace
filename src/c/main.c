@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "main.h"
 
 static Window *s_main_window;
 static BitmapLayer *s_background_layer, *s_bt_icon_layer;
@@ -17,6 +18,27 @@ static GFont s_time_font;
 static GFont s_date_font;
 static GFont s_temperature_font, s_local_font, s_forecast_font;
 static char s_battery_buffer[16];
+
+// A struct for our specific settings (see main.h)
+ClaySettings settings;
+
+// Initialize the default settings
+static void prv_default_settings() {
+  snprintf(settings.Temperature_scale, sizeof(settings.Temperature_scale), "%s", "fahrenheit");
+}
+
+// Read settings from persistent storage
+static void prv_load_settings() {
+  // Load the default settings
+  prv_default_settings();
+  // Read settings from persistent storage, if they exist
+  persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+}
+
+// Save the settings to persistent storage
+static void prv_save_settings() {
+  persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
+}
 
 static void bluetooth_callback(bool connected) {
   // Show icon if disconnected
@@ -109,8 +131,8 @@ static void main_window_load(Window *window) {
 
   // Create the TextLayer with specific bounds
   s_battery_layer = text_layer_create(GRect(10, 5, bounds.size.w - 20, 18));
-  s_time_layer = text_layer_create(GRect(0, 14, bounds.size.w, 46));
-  s_date_top_layer = text_layer_create(GRect(16, 56, bounds.size.w - 32, 20));
+  s_time_layer = text_layer_create(GRect(0, 12, bounds.size.w, 46));
+  s_date_top_layer = text_layer_create(GRect(16, 55, bounds.size.w - 32, 20));
   s_date_btm_layer = text_layer_create(GRect(16, 72, bounds.size.w - 32, 20));
   s_temperature_layer = text_layer_create(GRect(50, 92, bounds.size.w - 60, 24));
   s_local_layer = text_layer_create(GRect(50, 112, bounds.size.w - 60, 16));
@@ -353,6 +375,13 @@ uint32_t get_forecast_resource_id_by_iconname(char iconname_buffer[8]) {
 }
 
 static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+  // Read config
+  Tuple *temp_scale_tuple = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_SCALE);
+  if(temp_scale_tuple) {
+    snprintf(settings.Temperature_scale, sizeof(settings.Temperature_scale), "%s", temp_scale_tuple->value->cstring);
+    prv_save_settings();
+  }
+
   // Store incoming information
   static char temperature_buffer[8];
   static char conditions_buffer[32];
@@ -369,7 +398,8 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char forecasticon4_buffer[8];
 
   // Read tuples for data
-  Tuple *temp_tuple = dict_find(iterator, MESSAGE_KEY_TEMPERATURE);
+  Tuple *temp_tuple_f = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_F);
+  Tuple *temp_tuple_c = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_C);
   Tuple *conditions_tuple = dict_find(iterator, MESSAGE_KEY_CONDITIONS);
   Tuple *icon_tuple = dict_find(iterator, MESSAGE_KEY_ICONNAME);
   Tuple *local_tuple = dict_find(iterator, MESSAGE_KEY_LOCALNAME);
@@ -384,8 +414,12 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   Tuple *fcsticon4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS4);
 
   // If all data is available, use it
-  if(temp_tuple && conditions_tuple) {
-    snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°c", (int)temp_tuple->value->int32);
+  if(temp_tuple_f && conditions_tuple) {
+    if (strcmp(settings.Temperature_scale, "celsius") == 0){
+      snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°c", (int)temp_tuple_c->value->int32);
+    }else{
+      snprintf(temperature_buffer, sizeof(temperature_buffer), "%d°f", (int)temp_tuple_f->value->int32);
+    }
     snprintf(conditions_buffer, sizeof(conditions_buffer), "%s", conditions_tuple->value->cstring);
     snprintf(icon_buffer, sizeof(icon_buffer), "%s", icon_tuple->value->cstring);
     snprintf(local_buffer, sizeof(local_buffer), "%s", local_tuple->value->cstring);
@@ -441,6 +475,8 @@ static void outbox_sent_callback(DictionaryIterator *iterator, void *context) {
 }
 
 static void init() {
+  prv_load_settings();
+
   // Create main Window element and assign to pointer
   s_main_window = window_create();
 
@@ -458,6 +494,7 @@ static void init() {
 
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+
   // Register callbacks
   app_message_register_inbox_received(inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);

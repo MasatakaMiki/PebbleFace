@@ -1,16 +1,21 @@
 {
     "author": "masataka.miki@gmail.com",
-    "dependencies": {},
+    "dependencies": {
+        "pebble-clay": "^1.0.2"
+    },
     "keywords": [],
     "name": "owm-forecastface",
     "pebble": {
         "capabilities": [
-            "location"
+            "location",
+            "configurable"
         ],
         "displayName": "OWM ForecastFace",
         "enableMultiJS": true,
         "messageKeys": [
-            "TEMPERATURE",
+            "TEMPERATURE_SCALE",
+            "TEMPERATURE_F",
+            "TEMPERATURE_C",
             "CONDITIONS",
             "ICONNAME",
             "LOCALNAME",
@@ -338,5 +343,5 @@
             "watchface": true
         }
     },
-    "version": "1.0.0"
+    "version": "2.0.0"
 }
