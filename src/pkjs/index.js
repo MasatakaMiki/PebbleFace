@@ -1,4 +1,4 @@
-var debug_mode = true;
+var debug_mode = false;
 
 // Import the Clay package
 var Clay = require('pebble-clay');

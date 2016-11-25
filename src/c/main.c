@@ -163,7 +163,7 @@ static void main_window_load(Window *window) {
   text_layer_set_text_color(s_forecast_layer_3, GColorWhite);
   text_layer_set_text_color(s_forecast_layer_4, GColorWhite);
   // font
-  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
+  s_battery_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_14));
   text_layer_set_font(s_battery_layer, s_battery_font);
   s_time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_40));
   text_layer_set_font(s_time_layer, s_time_font);
@@ -174,7 +174,7 @@ static void main_window_load(Window *window) {
   text_layer_set_font(s_temperature_layer, s_temperature_font);
   s_local_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_14));
   text_layer_set_font(s_local_layer, s_local_font);
-  s_forecast_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_10));
+  s_forecast_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_APPLE_GARAMOND_BOLD_12));
   text_layer_set_font(s_forecast_layer_1, s_forecast_font);
   text_layer_set_font(s_forecast_layer_2, s_forecast_font);
   text_layer_set_font(s_forecast_layer_3, s_forecast_font);
