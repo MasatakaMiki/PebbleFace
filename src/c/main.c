@@ -110,24 +110,24 @@ static void main_window_load(Window *window) {
   // bluetooth
   s_bt_icon_layer = bitmap_layer_create(GRect(10, 12, 18, 18));
   bitmap_layer_set_bitmap(s_bt_icon_layer, s_bt_icon_bitmap);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_bt_icon_layer));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_bt_icon_layer));
   // weather
   s_weather_icon_layer = bitmap_layer_create(GRect(10, 98, 50, 30));
   bitmap_layer_set_bitmap(s_weather_icon_layer, s_weather_icon_bitmap);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_weather_icon_layer));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_weather_icon_layer));
   // forecast
   s_forecast_icon_layer_1 = bitmap_layer_create(GRect(11, 134, 30, 18));
   bitmap_layer_set_bitmap(s_forecast_icon_layer_1, s_forecast_icon_bitmap_1);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_1));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_forecast_icon_layer_1));
   s_forecast_icon_layer_2 = bitmap_layer_create(GRect(42, 134, 30, 18));
   bitmap_layer_set_bitmap(s_forecast_icon_layer_2, s_forecast_icon_bitmap_2);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_2));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_forecast_icon_layer_2));
   s_forecast_icon_layer_3 = bitmap_layer_create(GRect(73, 134, 30, 18));
   bitmap_layer_set_bitmap(s_forecast_icon_layer_3, s_forecast_icon_bitmap_3);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_3));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_forecast_icon_layer_3));
   s_forecast_icon_layer_4 = bitmap_layer_create(GRect(104, 134, 30, 18));
   bitmap_layer_set_bitmap(s_forecast_icon_layer_4, s_forecast_icon_bitmap_4);
-  layer_add_child(window_get_root_layer(window), bitmap_layer_get_layer(s_forecast_icon_layer_4));
+  layer_add_child(window_layer, bitmap_layer_get_layer(s_forecast_icon_layer_4));
 
   // Create the TextLayer with specific bounds
   s_battery_layer = text_layer_create(GRect(10, 5, bounds.size.w - 20, 18));
@@ -217,16 +217,16 @@ static void main_window_load(Window *window) {
   text_layer_set_text(s_forecast_layer_4, "");
 
   // Add it as a child layer to the Window's root layer
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_battery_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_battery_layer));
   layer_add_child(window_layer, text_layer_get_layer(s_time_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_top_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_date_btm_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_temperature_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_local_layer));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_1));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_2));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_3));
-  layer_add_child(window_get_root_layer(window), text_layer_get_layer(s_forecast_layer_4));
+  layer_add_child(window_layer, text_layer_get_layer(s_date_top_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_date_btm_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_temperature_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_local_layer));
+  layer_add_child(window_layer, text_layer_get_layer(s_forecast_layer_1));
+  layer_add_child(window_layer, text_layer_get_layer(s_forecast_layer_2));
+  layer_add_child(window_layer, text_layer_get_layer(s_forecast_layer_3));
+  layer_add_child(window_layer, text_layer_get_layer(s_forecast_layer_4));
 
   // Show the correct state of the BT connection from the start
   bluetooth_callback(connection_service_peek_pebble_app_connection());
