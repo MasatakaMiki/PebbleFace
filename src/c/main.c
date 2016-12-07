@@ -38,6 +38,17 @@ static void prv_load_settings() {
 // Save the settings to persistent storage
 static void prv_save_settings() {
   persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
+
+  // Get weather update every saving the settings
+  // Begin dictionary
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+
+  // Add a key-value pair
+  dict_write_uint8(iter, 0, 0);
+
+  // Send the message!
+  app_message_outbox_send();
 }
 
 static void bluetooth_callback(bool connected) {
