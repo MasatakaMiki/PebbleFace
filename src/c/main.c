@@ -38,7 +38,11 @@ static void prv_load_settings() {
 // Save the settings to persistent storage
 static void prv_save_settings() {
   persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
+  // Update the display based on new settings
+  prv_update_display();
+}
 
+static void prv_update_display() {
   // Get weather update every saving the settings
   // Begin dictionary
   DictionaryIterator *iter;
@@ -385,9 +389,10 @@ uint32_t get_forecast_resource_id_by_iconname(char iconname_buffer[8]) {
   return resource_id;
 }
 
-static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+//static void inbox_received_callback(DictionaryIterator *iterator, void *context) {
+static void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
   // Read config
-  Tuple *temp_scale_tuple = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_SCALE);
+  Tuple *temp_scale_tuple = dict_find(iter, MESSAGE_KEY_TEMPERATURE_SCALE);
   if(temp_scale_tuple) {
     snprintf(settings.Temperature_scale, sizeof(settings.Temperature_scale), "%s", temp_scale_tuple->value->cstring);
     prv_save_settings();
@@ -408,19 +413,19 @@ static void inbox_received_callback(DictionaryIterator *iterator, void *context)
   static char forecasticon4_buffer[8];
 
   // Read tuples for data
-  Tuple *temp_tuple_f = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_F);
-  Tuple *temp_tuple_c = dict_find(iterator, MESSAGE_KEY_TEMPERATURE_C);
-  Tuple *icon_tuple = dict_find(iterator, MESSAGE_KEY_ICONNAME);
-  Tuple *local_tuple = dict_find(iterator, MESSAGE_KEY_LOCALNAME);
+  Tuple *temp_tuple_f = dict_find(iter, MESSAGE_KEY_TEMPERATURE_F);
+  Tuple *temp_tuple_c = dict_find(iter, MESSAGE_KEY_TEMPERATURE_C);
+  Tuple *icon_tuple = dict_find(iter, MESSAGE_KEY_ICONNAME);
+  Tuple *local_tuple = dict_find(iter, MESSAGE_KEY_LOCALNAME);
 
-  Tuple *fcsttime1_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME1);
-  Tuple *fcsttime2_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME2);
-  Tuple *fcsttime3_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME3);
-  Tuple *fcsttime4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTTIME4);
-  Tuple *fcsticon1_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS1);
-  Tuple *fcsticon2_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS2);
-  Tuple *fcsticon3_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS3);
-  Tuple *fcsticon4_tuple = dict_find(iterator, MESSAGE_KEY_FORECASTICONS4);
+  Tuple *fcsttime1_tuple = dict_find(iter, MESSAGE_KEY_FORECASTTIME1);
+  Tuple *fcsttime2_tuple = dict_find(iter, MESSAGE_KEY_FORECASTTIME2);
+  Tuple *fcsttime3_tuple = dict_find(iter, MESSAGE_KEY_FORECASTTIME3);
+  Tuple *fcsttime4_tuple = dict_find(iter, MESSAGE_KEY_FORECASTTIME4);
+  Tuple *fcsticon1_tuple = dict_find(iter, MESSAGE_KEY_FORECASTICONS1);
+  Tuple *fcsticon2_tuple = dict_find(iter, MESSAGE_KEY_FORECASTICONS2);
+  Tuple *fcsticon3_tuple = dict_find(iter, MESSAGE_KEY_FORECASTICONS3);
+  Tuple *fcsticon4_tuple = dict_find(iter, MESSAGE_KEY_FORECASTICONS4);
 
   // If all data is available, use it
   if(temp_tuple_f && icon_tuple) {
@@ -512,7 +517,7 @@ static void init() {
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
 
   // Register callbacks
-  app_message_register_inbox_received(inbox_received_callback);
+  app_message_register_inbox_received(prv_inbox_received_handler); // inbox_received_callback);
   app_message_register_inbox_dropped(inbox_dropped_callback);
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
